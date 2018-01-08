@@ -21,7 +21,7 @@
     <groupId>org.yardstickframework</groupId>
     <artifactId>yardstick</artifactId>
     <name>Yardstick</name>
-    <version>0.8.0</version>
+    <version>0.8.3</version>
 
     <url>https://github.com/gridgain/yardstick</url>
     <description>Framework for benchmarks writing.</description>
@@ -65,7 +65,13 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.9-RC1</version>
+            <version>0.9.11</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
         </dependency>
 
         <dependency>

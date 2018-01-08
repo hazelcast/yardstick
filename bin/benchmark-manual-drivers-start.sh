@@ -50,6 +50,12 @@ chmod +x $CONFIG_TMP
 . $CONFIG_TMP
 rm $CONFIG_TMP
 
+if ! [[ -d ${SCRIPT_DIR}/../output ]]
+then
+    echo "<"$(date +"%H:%M:%S")"><yardstick> Creating output directory"
+    mkdir ${SCRIPT_DIR}/../output
+fi
+
 # Define user to establish remote ssh session.
 if [ "${REMOTE_USER}" == "" ]; then
     REMOTE_USER=$(whoami)
@@ -88,18 +94,18 @@ function cleanup() {
 trap "cleanup; exit" SIGHUP SIGINT SIGTERM SIGQUIT SIGKILL
 
 # Define logs directory.
-LOGS_BASE=logs-$(date +"%Y%m%d-%H%M%S")
+LOGS_BASE=${SCRIPT_DIR}/../output/logs-$(date +"%Y%m%d-%H%M%S")
 
-LOGS_DIR=${SCRIPT_DIR}/../${LOGS_BASE}/logs_drivers
+LOGS_DIR=${LOGS_BASE}/logs_drivers
 
 if [ ! -d "${LOGS_DIR}" ]; then
     mkdir -p ${LOGS_DIR}
 fi
 
 if [[ "${OUTPUT_FOLDER}" == "" ]] && [[ ${CONFIG} != *'-of '* ]] && [[ ${CONFIG} != *'--outputFolder '* ]]; then
-    folder=results-$(date +"%Y%m%d-%H%M%S")
+    results_folder=${SCRIPT_DIR}/../output/results-$(date +"%Y%m%d-%H%M%S")
 
-    OUTPUT_FOLDER="--outputFolder ${folder}"
+    OUTPUT_FOLDER="--outputFolder ${results_folder}"
 fi
 
 CUR_DIR=$(pwd)
@@ -120,7 +126,7 @@ do
     echo "<"$(date +"%H:%M:%S")"><yardstick> Starting driver config '..."${suffix}"' with id=${id}"
     echo "<"$(date +"%H:%M:%S")"><yardstick> Log file: "${file_log}
 
-    MAIN_CLASS=org.yardstickframework.BenchmarkDriverStartUp JVM_OPTS=${JVM_OPTS}" -Dyardstick.driver${id}" CP=${CP} \
+    MAIN_CLASS=org.yardstickframework.BenchmarkDriverStartUp JVM_OPTS=${JVM_OPTS}${DRIVER_JVM_OPTS}" -Dyardstick.driver${id}" CP=${CP} \
     CUR_DIR=${CUR_DIR} PROPS_ENV0=${PROPS_ENV} \
     ${SCRIPT_DIR}/benchmark-bootstrap.sh ${cfgParams} --config ${CONFIG_INCLUDE} > ${file_log} 2>& 1 &
 

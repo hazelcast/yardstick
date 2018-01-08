@@ -50,6 +50,12 @@ chmod +x $CONFIG_TMP
 . $CONFIG_TMP
 rm $CONFIG_TMP
 
+if ! [[ -d ${SCRIPT_DIR}/../output ]]
+then
+    echo "<"$(date +"%H:%M:%S")"><yardstick> Creating output directory"
+    mkdir ${SCRIPT_DIR}/../output
+fi
+
 if [ "${CONFIG}" == "" ]; then
     IFS=',' read -ra cfg <<< "${CONFIGS}"
 
@@ -107,9 +113,9 @@ function cleanup() {
 trap "cleanup; exit" SIGHUP SIGINT SIGTERM SIGQUIT SIGKILL
 
 # Define logs directory.
-LOGS_BASE=logs-$(date +"%Y%m%d-%H%M%S")
+LOGS_BASE=${SCRIPT_DIR}/../output/logs-$(date +"%Y%m%d-%H%M%S")
 
-LOGS_DIR=${SCRIPT_DIR}/../${LOGS_BASE}/logs_servers
+LOGS_DIR=${LOGS_BASE}/logs_servers
 
 if [ ! -d "${LOGS_DIR}" ]; then
     mkdir -p ${LOGS_DIR}
@@ -128,7 +134,7 @@ do
     echo "<"$(date +"%H:%M:%S")"><yardstick> Starting server config '..."${suffix}"' with id=${id}"
     echo "<"$(date +"%H:%M:%S")"><yardstick> Log file: "${file_log}
 
-    MAIN_CLASS=org.yardstickframework.BenchmarkServerStartUp JVM_OPTS=${JVM_OPTS}" -Dyardstick.server${id}" CP=${CP} \
+    MAIN_CLASS=org.yardstickframework.BenchmarkServerStartUp JVM_OPTS=${JVM_OPTS}${SERVER_JVM_OPTS}" -Dyardstick.server${id}" CP=${CP} \
     CUR_DIR=${CUR_DIR} PROPS_ENV0=${PROPS_ENV} \
     nohup ${SCRIPT_DIR}/benchmark-bootstrap.sh ${CONFIG_PRM} --config ${CONFIG_INCLUDE} > ${file_log} 2>& 1 &
 done
