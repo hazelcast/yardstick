@@ -56,6 +56,10 @@ public class BenchmarkConfiguration implements Serializable {
     private String serverName;
 
     /** */
+    @Parameter(names = {"-vs", "--valueSize"}, description = "set the size of the byte[] in the sample value object")
+    private int valueSize = 1;
+
+    /** */
     @Parameter(names = {"-id", "--memberId"}, description = "Memebr ID")
     private int memberId = -1;
 
@@ -152,6 +156,11 @@ public class BenchmarkConfiguration implements Serializable {
     public String serverName() {
         return serverName;
     }
+
+    /**
+     * @return Value size.
+     */
+    public int valueSize() {return valueSize; }
 
     /**
      * @return Benchmark driver names.
